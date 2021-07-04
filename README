@@ -1,4 +1,4 @@
-HTTP test tool
+HTTP test tool (THTTP)
 ----
 
 How to Use?
@@ -6,7 +6,7 @@ How to Use?
 
 Input:
 
-./test_http -u URL PARSE_YAML
+./thttp -u URL PARSE_YAML
 
 Output:
 
@@ -25,7 +25,7 @@ Test URL: http://localhost/user
 Options
 ---
 
-command => ./test_http -h
+command => thttp -h
 
 List:
 	-u: URL (default: localhost)
