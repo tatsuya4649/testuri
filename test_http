@@ -1,0 +1,33 @@
+#!/bin/bash
+
+function usage_exit(){
+	echo "Usage: $0 [-u URL] [-h] YAML-FILE"
+	echo -e "\tYAML: URI YAML FILE"
+	echo -e "\t-u: URL (default: localhost)"
+	echo -e "\t-h: Help"
+	exit 1
+}
+
+while getopts ":u:h" OPT; do
+	case $OPT in
+	u) URL=$OPTARG
+		;;
+	h) usage_exit
+		;;
+	\?) usage_exit
+		;;
+	esac
+done
+shift $((OPTIND-1))
+
+if [ -z "$1" ]; then
+	echo "Not found YAML file."
+	usage_exit
+fi
+
+YAML="$1"
+URI_LIST=$(./parse.py $YAML | jq -r ".path[]")
+
+for URI in $URI_LIST; do
+	echo $URI
+done
