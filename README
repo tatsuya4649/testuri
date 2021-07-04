@@ -1,2 +1,38 @@
 HTTP test tool
 ----
+
+How to Use?
+---
+
+Input:
+
+./test_http -u URL PARSE_YAML
+
+Output:
+
+Test URL: http://localhost/
+=====================
+.
+.
+.
+
+Test URL: http://localhost/user
+=====================
+.
+.
+.
+
+Options
+---
+
+command => ./test_http -h
+
+List:
+	-u: URL (default: localhost)
+	-s: Only State Code
+	-H: Only HEAD
+	-v: Verbose output
+	-o: Output File
+	-O: Output File(stderr too)
+	-q: Output in Quiet
+	-h: Help
