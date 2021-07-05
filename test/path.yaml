@@ -3,6 +3,7 @@ path:
     method: "GET"
   - uri: "/user"
     method: "GET"
+    port: "4040"
   - uri: "/post"
     method: "POST"
     data: "Hello World"

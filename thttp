@@ -47,6 +47,7 @@ YAML="$1"
 URL=${URL:-"http://localhost"}
 URI_LIST=$(./parse.py $YAML | jq -r ".path[].uri")
 METHOD_LIST=$(./parse.py $YAML | jq -r ".path[].method")
+PORT_LIST=$(./parse.py $YAML | jq -r ".path[].port")
 
 if [ -n "$HEADER" -a -n "$VERBOSE" ]; then
 	echo "Only One Option, HEADER OR VERBOSE"
@@ -65,9 +66,14 @@ fi
 
 LINE=$(echo $URI_LIST | wc -w)
 for ((i=0;i<$LINE;i++)); do
-	ALLURI=$URL$(echo $URI_LIST | cut -d' ' -f$((i+1)))
 	METHOD=$(echo $METHOD_LIST | cut -d' ' -f$((i+1)))
-	eval "echo -n \"Test URL: \"$ALLURI\" => METHOD: \"$METHOD\"\"" $META
+	PORT=$(echo $PORT_LIST | cut -d' ' -f$((i+1)))
+	if [ $PORT == null ]; then
+		#default port number
+		PORT="80"
+	fi
+	ALLURI=$URL:$PORT$(echo $URI_LIST | cut -d' ' -f$((i+1)))
+	eval "echo -n \"Test URL: \"$ALLURI:$PORT\" => METHOD: \"$METHOD\"\"" $META
 
 	case $METHOD in
 	"GET") MOPTION=
@@ -88,5 +94,5 @@ for ((i=0;i<$LINE;i++)); do
 	esac
 	eval echo "=====================" $META
 
-	eval curl $MOPTION $DATA $HEADER $VERBOSE $ALLURI $STATUS_ONLY $OUTPUT
+	eval curl $MOPTION $DATA $HEADER $VERBOSE $ALLURI:$PORT $STATUS_ONLY $OUTPUT
 done
