@@ -1,3 +1,5 @@
 path:
-  - "/"
-  - "/user"
+  - uri: "/"
+    method: "GET"
+  - uri: "/user"
+    method: "GET"

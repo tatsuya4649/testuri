@@ -45,7 +45,8 @@ fi
 
 YAML="$1"
 URL=${URL:-"http://localhost"}
-URI_LIST=$(./parse.py $YAML | jq -r ".path[]")
+URI_LIST=$(./parse.py $YAML | jq -r ".path[].uri")
+METHOD_LIST=$(./parse.py $YAML | jq -r ".path[].method")
 
 if [ -n "$HEADER" -a -n "$VERBOSE" ]; then
 	echo "Only One Option, HEADER OR VERBOSE"
@@ -62,8 +63,9 @@ else
 	META=$OUTPUT
 fi
 
-for URI in $URI_LIST; do
-	ALLURI=$URL$URI
+LINE=$(echo $URI_LIST | wc -w)
+for ((i=0;i<$LINE;i++)); do
+	ALLURI=$URL$(echo $URI | cut -d' ' -f$((i+1)))
 	eval echo "Test URL: \"$ALLURI\"" $META
 	eval echo "=====================" $META
 	eval curl $HEADER $VERBOSE $ALLURI $STATUS_ONLY $OUTPUT
