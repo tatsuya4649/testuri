@@ -65,8 +65,9 @@ fi
 
 LINE=$(echo $URI_LIST | wc -w)
 for ((i=0;i<$LINE;i++)); do
-	ALLURI=$URL$(echo $URI | cut -d' ' -f$((i+1)))
-	eval echo "Test URL: \"$ALLURI\"" $META
+	ALLURI=$URL$(echo $URI_LIST | cut -d' ' -f$((i+1)))
+	METHOD=$(echo $METHOD_LIST | cut -d' ' -f$((i+1)))
+	eval "echo \"Test URL: \"$ALLURI\" => METHOD: \"$METHOD\"\"" $META
 	eval echo "=====================" $META
 	eval curl $HEADER $VERBOSE $ALLURI $STATUS_ONLY $OUTPUT
 done
