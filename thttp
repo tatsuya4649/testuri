@@ -73,7 +73,7 @@ for ((i=0;i<$LINE;i++)); do
 		PORT="80"
 	fi
 	ALLURI=$URL:$PORT$(echo $URI_LIST | cut -d' ' -f$((i+1)))
-	eval "echo -n \"Test URL: \"$ALLURI:$PORT\" => METHOD: \"$METHOD\"\"" $META
+	eval "echo -n \"Test URL: \"$ALLURI\" => METHOD: \"$METHOD\"\"" $META
 
 	case $METHOD in
 	"GET") MOPTION=
