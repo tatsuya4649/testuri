@@ -1,0 +1,70 @@
+#!/bin/bash
+
+function usage_exit(){
+	echo "Usage: $0 [options] YAML-FILE"
+	echo -e "\tYAML: URI YAML FILE"
+	echo -e "\t-u: URL (default: localhost)"
+	echo -e "\t-s: Only State Code"
+	echo -e "\t-H: Only HEAD"
+	echo -e "\t-v: Verbose output"
+	echo -e "\t-o: Output File"
+	echo -e "\t-O: Output File(stderr too)"
+	echo -e "\t-q: Output in Quiet"
+	echo -e "\t-h: Help"
+	exit 1
+}
+
+while getopts ":u:o:O:sHvhq" OPT; do
+	case $OPT in
+	u) URL=$OPTARG
+		;;
+	H) HEADER="-I"
+		;;
+	v) VERBOSE="-v"
+		;;
+	o) OUTPUT=">> $OPTARG"
+		;;
+	O) OUTPUT=">> $OPTARG 2>&1"
+		;;
+	s) STATUS_ONLY="-o /dev/null -w '%{http_code}\n' -s"
+		;;
+	q) QUIET=">/dev/null 2>&1"
+		;;
+	h) usage_exit
+		;;
+	\?) usage_exit
+		;;
+	esac
+done
+shift $((OPTIND-1))
+
+if [ -z "$1" ]; then
+	echo "Not found YAML file."
+	usage_exit
+fi
+
+YAML="$1"
+URL=${URL:-"http://localhost"}
+URI_LIST=$(./parse.py $YAML | jq -r ".path[]")
+
+if [ -n "$HEADER" -a -n "$VERBOSE" ]; then
+	echo "Only One Option, HEADER OR VERBOSE"
+	usage_exit
+fi
+if [ -n "$STATUS_ONLY" ] && [ -n "$HEADER" -a -n "$VERBOSE" ]; then
+	echo "Must not use satus only option and (Header or Verbose)options"
+	usage_exit
+fi
+
+if [ -n "$QUIET" ]; then
+	META=$QUIET
+else
+	META=$OUTPUT
+fi
+
+for URI in $URI_LIST; do
+	ALLURI=$URL$URI
+	eval echo "Test URL: \"$ALLURI\"" $META
+	eval echo "=====================" $META
+	eval curl $HEADER $VERBOSE $ALLURI $STATUS_ONLY $OUTPUT
+done
