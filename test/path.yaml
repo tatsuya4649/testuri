@@ -3,3 +3,6 @@ path:
     method: "GET"
   - uri: "/user"
     method: "GET"
+  - uri: "/post"
+    method: "POST"
+    data: "Hello World"

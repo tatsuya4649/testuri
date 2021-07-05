@@ -67,7 +67,26 @@ LINE=$(echo $URI_LIST | wc -w)
 for ((i=0;i<$LINE;i++)); do
 	ALLURI=$URL$(echo $URI_LIST | cut -d' ' -f$((i+1)))
 	METHOD=$(echo $METHOD_LIST | cut -d' ' -f$((i+1)))
-	eval "echo \"Test URL: \"$ALLURI\" => METHOD: \"$METHOD\"\"" $META
+	eval "echo -n \"Test URL: \"$ALLURI\" => METHOD: \"$METHOD\"\"" $META
+
+	case $METHOD in
+	"GET") MOPTION=
+		echo -en "\n"
+		;;
+	"POST") MOPTION="-X POST"
+		DATA_VALUE=$(./parse.py $YAML | jq -r ".path[$i].data")
+		echo -en " (DATA:\"$DATA_VALUE\")\n"
+		DATA="-d '$DATA_VALUE'"
+		;;
+	"HEAD") MOPTION="-I"
+		echo -en "\n"
+		;;
+	\?)
+		echo -en "\n"
+		echo "unknown method $MOPTION"
+		continue
+	esac
 	eval echo "=====================" $META
-	eval curl $HEADER $VERBOSE $ALLURI $STATUS_ONLY $OUTPUT
+
+	eval curl $MOPTION $DATA $HEADER $VERBOSE $ALLURI $STATUS_ONLY $OUTPUT
 done
